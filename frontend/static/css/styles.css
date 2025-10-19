@@ -1,0 +1,329 @@
+/* =========================
+   GENERAL RESET
+========================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* =========================
+   PAGE BACKGROUND
+========================= */
+body {
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  background: linear-gradient(to bottom right, #2e7d32, #81c784);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+/* =========================
+   CARD CONTAINER
+========================= */
+.card {
+  display: flex;
+  width: 900px;
+  max-width: 95%;
+  height: 600px;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* =========================
+   LEFT IMAGE SECTION
+========================= */
+.image-side {
+  flex: 1;
+  height: 100%;
+}
+
+.image-side .main-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* =========================
+   RIGHT FORM SECTION
+========================= */
+.form-side {
+  flex: 1;
+  padding: 2rem;
+}
+
+/* =========================
+   TITLE WITH LOGO
+========================= */
+.title-with-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.title-with-logo .title-logo {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  border-radius: 50%;
+  border: 2px solid #2e7d32;
+}
+
+.title-with-logo h1 {
+  font-size: 2rem;
+  color: #2e7d32;
+  margin: 0;
+}
+
+.subtitle {
+  color: #555;
+  margin-bottom: 2rem;
+}
+
+/* =========================
+   FORM FIELDS
+========================= */
+.form-group {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+input {
+  width: 100%;
+  padding: 0.75rem 2.5rem 0.75rem 0.75rem;
+  border: 1px solid #60dd6a;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  transition: border-color 0.3s ease;
+}
+
+input:focus {
+  outline: none;
+  border-color: #2e7d32;
+  box-shadow: 0 0 4px rgba(46, 125, 50, 0.3);
+}
+
+.icon {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+}
+
+/* =========================
+   MAIN BUTTON
+========================= */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #2e7d32;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.btn:hover {
+  background-color: #1b5e20;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.arrow-icon {
+  font-size: 0.9rem;
+}
+
+/* =========================
+   LINK SECTION
+========================= */
+.alt-action {
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.alt-link {
+  color: #2e7d32;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.alt-link:hover {
+  text-decoration: underline;
+}
+
+/* =========================
+   DIVIDER
+========================= */
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: black;
+  margin: 1.5rem 0;
+  font-size: 0.9rem;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #186332;
+}
+
+.divider:not(:empty)::before {
+  margin-right: 0.75em;
+}
+
+.divider:not(:empty)::after {
+  margin-left: 0.75em;
+}
+
+/* =========================
+   SOCIAL LOGIN BUTTONS
+========================= */
+.social-login {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.btn-social {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-social i {
+  font-size: 1.2rem;
+}
+
+/* Google Button */
+.btn-social.google {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  color: #444;
+  border-radius: 30px;
+}
+
+.btn-social.google i {
+  background: conic-gradient(
+    from -45deg,
+    #ea4335 0deg 90deg,
+    #fbbc05 90deg 180deg,
+    #34a853 180deg 270deg,
+    #4285f4 270deg 360deg
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.btn-social.google:hover {
+  background-color: #f7f7f7;
+}
+
+/* Facebook Button */
+.btn-social.facebook {
+  background-color: #1877f2;
+  border: none;
+  color: white;
+  border-radius: 30px;
+}
+
+.btn-social.facebook:hover {
+  background-color: #145dbf;
+}
+
+/* =========================
+   RESPONSIVE DESIGN
+========================= */
+@media (max-width: 768px) {
+  body {
+    background: none; /* Remove gradient on mobile */
+  }
+
+  .card {
+    flex-direction: column;
+    background: transparent; /* Let background image show */
+    height: auto;
+    box-shadow: none;
+    align-items: center;
+  }
+
+  /* Left image becomes full background */
+  .image-side {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* Push behind */
+  }
+
+  .image-side .main-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Floating form */
+  .form-side {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    width: 90%;
+    max-width: 400px;
+    margin: 2rem auto;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  }
+
+  /* Stack logo above title */
+  .title-with-logo {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .title-with-logo .title-logo {
+    width: 40px;
+    height: 40px;
+  }
+
+  .title-with-logo h1 {
+    font-size: 1.6rem;
+  }
+
+  /* Stack social buttons on mobile */
+  .social-login {
+    flex-direction: column;
+  }
+}
+
+/* Extra small phones */
+@media (max-width: 480px) {
+  .title-with-logo .title-logo {
+    width: 32px;
+    height: 32px;
+  }
+
+  .title-with-logo h1 {
+    font-size: 1.4rem;
+  }
+}

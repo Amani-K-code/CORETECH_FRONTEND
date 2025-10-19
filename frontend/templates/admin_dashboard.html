@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Core Tech Africa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .page-section:not(.active) {
+            display: none;
+        }
+        .nav-btn.active {
+            background-color: #dbeafe; /* bg-blue-100 */
+            color: #2563eb; /* text-blue-600 */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="flex flex-col md:flex-row h-screen">
+        <nav class="bg-white shadow-lg p-6 flex flex-col items-center md:items-start space-y-4 md:w-64">
+            <div class="logo-section flex items-center space-x-2 mb-8">
+                <i class="fa-solid fa-droplet text-blue-500 text-3xl"></i>
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800">Core Tech Africa</h1>
+                    <p class="text-sm text-gray-500">Smart Water Management</p>
+                </div>
+            </div>
+            
+            <a href="#overview" class="nav-btn active w-full py-3 px-4 rounded-lg flex items-center space-x-4 text-gray-700 hover:bg-blue-100 hover:text-blue-600 transition-colors duration-200" data-page="overview">
+                <i class="fa-solid fa-chart-bar text-lg"></i>
+                <span class="font-medium hidden md:block">Overview (Admin)</span>
+            </a>
+            <a href="#user_management" class="nav-btn w-full py-3 px-4 rounded-lg flex items-center space-x-4 text-gray-700 hover:bg-blue-100 hover:text-blue-600 transition-colors duration-200" data-page="user_management">
+                <i class="fa-solid fa-users-gear text-lg"></i>
+                <span class="font-medium hidden md:block">User Management</span>
+            </a>
+            <a href="#system_logs" class="nav-btn w-full py-3 px-4 rounded-lg flex items-center space-x-4 text-gray-700 hover:bg-blue-100 hover:text-blue-600 transition-colors duration-200" data-page="system_logs">
+                <i class="fa-solid fa-clipboard-list text-lg"></i>
+                <span class="font-medium hidden md:block">System Logs</span>
+            </a>
+            
+            <button id="logout-btn" class="nav-btn w-full mt-auto py-3 px-4 rounded-lg flex items-center space-x-4 text-red-600 hover:bg-red-100 transition-colors duration-200">
+                <i class="fa-solid fa-right-from-bracket text-lg"></i>
+                <span class="font-medium hidden md:block">Logout</span>
+            </button>
+        </nav>
+
+        <main class="flex-1 p-6 overflow-y-auto">
+            <header class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold text-gray-800">Admin Dashboard</h2>
+                <div class="flex items-center space-x-4">
+                    <div class="user-profile flex items-center space-x-2">
+                        <i class="fa-solid fa-user-circle text-xl text-gray-600"></i>
+                        <span id="user-name" class="font-medium text-gray-700">Admin Loading...</span>
+                    </div>
+                </div>
+            </header>
+
+            <div id="content-container">
+                </div>
+        
+        </main>
+    </div>
+
+    <div id="edit-user-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <h3 class="text-xl font-semibold mb-4">Edit User Details</h3>
+            <form id="edit-user-form" onsubmit="handleUserUpdate(event)">
+                <input type="hidden" id="edit-user-id">
+                
+                <div class="mb-4">
+                    <label for="edit-username" class="block text-gray-700 text-sm font-bold mb-2">Username</label>
+                    <input type="text" id="edit-username" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+
+                <div class="mb-4">
+                    <label for="edit-email" class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                    <input type="email" id="edit-email" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+                
+                <div class="flex justify-end space-x-2">
+                    <button type="button" onclick="closeEditUserModal()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                        Cancel
+                    </button>
+                    <button type="submit" class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                        Save Changes
+                    </button>
+                </div>
+                <div id="edit-user-message" class="mt-3 text-sm font-semibold text-center"></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="edit-tokens-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <h3 class="text-xl font-semibold mb-4 text-blue-600">Adjust Tokens for <span id="token-user-name" class="font-bold"></span></h3>
+        <form id="edit-tokens-form">
+            <input type="hidden" id="token-user-id">
+            
+            <div class="mb-4">
+                <label for="token-adjustment" class="block text-gray-700 text-sm font-bold mb-2">Token Adjustment Amount</label>
+                <p class="text-xs text-gray-500 mb-2">Use **positive** values to ADD tokens, **negative** values to DEDUCT.</p>
+                <input type="number" step="0.01" id="token-adjustment" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+            </div>
+            
+            <div id="token-current-balance" class="mb-4 p-2 bg-blue-50 rounded text-sm text-blue-700 font-semibold">Current Balance: Loading...</div>
+
+            <div class="flex justify-end space-x-2">
+                <button type="button" onclick="closeTokenModal()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                    Cancel
+                </button>
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                    Apply Adjustment
+                </button>
+            </div>
+            <div id="token-edit-message" class="mt-3 text-sm font-semibold text-center"></div>
+        </form>
+        </div>
+    </div>
+
+    
+    <script>
+    // ==============================================
+    // UTILITY FUNCTIONS
+    // ==============================================
+    function logout() {
+        localStorage.removeItem('token');
+        localStorage.removeItem('access_token'); 
+        window.location.href = "{{ url_for('frontend.login') }}"; 
+    }
+
+    function showRefillMessage(message, type = 'error') {
+        const container = document.getElementById('refill-message-container');
+        if (!container) return;
+        container.innerHTML = `<p class="${type === 'success' ? 'text-green-600' : 'text-red-600'} font-semibold">${message}</p>`;
+        setTimeout(() => {
+            container.innerHTML = '';
+        }, 5000);
+    }
+    
+    // Global utility to get token
+    function getToken() {
+        return localStorage.getItem('token');
+    }
+
+    // ==============================================
+    // CORE FUNCTIONS (NAVIGATION & LOADING)
+    // ==============================================
+
+    async function loadPageContent(pageName) {
+        const container = document.getElementById('content-container');
+        const pagePath = `/_${pageName}.html`; 
+
+        try {
+            // Display Loading
+            container.innerHTML = `<div class="p-8 text-center text-gray-500"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Loading ${pageName.replace('_', ' ')}...</div>`;
+
+            const response = await fetch(pagePath);
+
+            if (!response.ok) {
+                container.innerHTML = `<p class="text-red-500">Error loading ${pageName} content (HTTP Status: ${response.status}).</p>`;
+                return;
+            }
+
+            const htmlContent = await response.text();
+            container.innerHTML = htmlContent;
+
+            // 🛑 AFTER LOADING HTML, RUN THE PAGE-SPECIFIC JAVASCRIPT 🛑
+            if (pageName === 'overview') {
+                fetchCompanyWaterData();
+                const refillForm = document.getElementById('refill-form');
+                if (refillForm) {
+                    refillForm.addEventListener('submit', handleRefillTank);
+                }
+            } else if (pageName === 'user_management') {
+                // Call the function to load user data when the user_management partial is loaded
+                await fetchUserManagementData(); 
+                
+                // CRITICAL: Re-attach form listeners now that the HTML is in the DOM
+                document.getElementById('edit-tokens-form').onsubmit = handleTokenAdjustment;
+                document.getElementById('edit-user-form').onsubmit = handleUserUpdate;
+
+            } else if (pageName === 'system_logs') {
+                setupLogsPage(); 
+            }
+            
+        } catch (error) {
+            console.error(`Network error loading ${pageName}:`, error);
+            container.innerHTML = `<p class="text-red-500">Network error loading content. See console.</p>`;
+        }
+    }
+
+    // Simplified Navigation setup
+    function setupNavigation() {
+        const navButtons = document.querySelectorAll('.nav-btn');
+
+        navButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Update active button state
+                navButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+
+                const targetPage = this.getAttribute('data-page'); 
+                loadPageContent(targetPage);
+            });
+        });
+        
+        // Load the default page (Overview) on initial page load
+        loadPageContent('overview'); 
+    }
+
+
+    // ==============================================
+    // DATA FETCHING & FORM HANDLERS
+    // ==============================================
+
+    async function fetchAdminUserData() {
+        const token = getToken();
+        if (!token) return;
+        
+        try {
+            const response = await fetch('/user/me', {
+                method: 'GET',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (!response.ok) {
+                logout();
+                return;
+            }
+
+            const data = await response.json();
+            document.getElementById('user-name').textContent = data.username;
+            
+            if (!data.is_admin) {
+                 window.location.href = "{{ url_for('frontend.dashboard') }}";
+            }
+            
+        } catch (error) {
+            console.error('Error fetching admin user data:', error);
+            logout(); 
+        }
+    }
+
+    // ==============================================
+    // USER MANAGEMENT FUNCTIONS
+    // ==============================================
+
+    function showTokenEditMessage(message, type = 'error') {
+        const container = document.getElementById('token-edit-message');
+        if (!container) return;
+        container.textContent = message;
+        container.className = `mt-3 text-sm font-semibold text-center ${type === 'success' ? 'text-green-600' : 'text-red-600'}`;
+        // Do not auto-clear message, let user close or new action clear it.
+    }
+
+    function closeTokenModal() {
+        document.getElementById('edit-tokens-modal').classList.add('hidden'); 
+        document.getElementById('token-edit-message').textContent = ''; // Clear message on close
+    }
+
+    // 1. Function to open the Token modal (Called from renderUserTable)
+    function openTokenModal(userId, username, currentBalance) {
+        document.getElementById('token-user-id').value = userId;
+        document.getElementById('token-user-name').textContent = username;
+        // CRITICAL FIX: Ensure currentBalance is displayed
+        document.getElementById('token-current-balance').textContent = `Current Balance: ${parseFloat(currentBalance).toFixed(2)} TKN`;
+        document.getElementById('token-adjustment').value = ''; 
+
+        document.getElementById('token-edit-message').textContent = '';
+        document.getElementById('edit-tokens-modal').classList.remove('hidden'); 
+    }
+
+    async function handleTokenAdjustment(e) {
+        e.preventDefault();
+
+        const token = getToken();
+        const userId = document.getElementById('token-user-id').value;
+        const adjustmentAmount = document.getElementById('token-adjustment').value;
+
+        if (!adjustmentAmount || isNaN(parseFloat(adjustmentAmount))) {
+            showTokenEditMessage('Please enter a valid amount.', 'error');
+            return;
+        }
+
+        const data = { amount: parseFloat(adjustmentAmount) };
+        showTokenEditMessage('Applying adjustment...', 'default'); // Use a loading/default message
+
+        try {
+            // NOTE: Using POST for token adjustments as it represents a transaction
+            const response = await fetch(`/admin/users/${userId}/tokens`, { 
+                method: 'PUT', 
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                showTokenEditMessage(`Token balance successfully adjusted. New balance: ${parseFloat(result.new_balance).toFixed(2)} TKN`, 'success');
+                // Update the current balance display and refresh the table
+                document.getElementById('token-current-balance').textContent = `Current Balance: ${parseFloat(result.new_balance).toFixed(2)} TKN`;
+                await fetchUserManagementData(); 
+            } else {
+                showTokenEditMessage(result.error || 'Failed to adjust tokens. Server error.', 'error');
+            }
+            
+        } catch (error) {
+            console.error('Error adjusting tokens:', error);
+            showTokenEditMessage('A network error occurred while updating tokens.', 'error');
+        }
+    }
+
+
+    // Helper function to display messages within the Edit Modal
+    function showEditMessage(message, type = 'error') {
+        const container = document.getElementById('edit-user-message');
+        if (!container) return;
+        container.textContent = message;
+        container.className = `mt-3 text-sm font-semibold text-center ${type === 'success' ? 'text-green-600' : 'text-red-600'}`;
+    }
+
+    // 1. Function to open the Edit User modal (Called from renderUserTable)
+    function openEditUserModal(userId, username, email) {
+        document.getElementById('edit-user-id').value = userId;
+        document.getElementById('edit-username').value = username;
+        document.getElementById('edit-email').value = email;
+        document.getElementById('edit-user-message').textContent = ''; 
+        document.getElementById('edit-user-modal').classList.remove('hidden'); 
+    }
+
+    // 2. Function to close the modal (Called from Cancel button)
+    function closeEditUserModal() {
+        document.getElementById('edit-user-modal').classList.add('hidden'); 
+        document.getElementById('edit-user-message').textContent = ''; // Clear message on close
+    }
+
+    // 3. Function to handle the form submission and API call (Called from the form's onsubmit)
+    async function handleUserUpdate(e) {
+        e.preventDefault();
+
+        const token = getToken();
+        const userId = document.getElementById('edit-user-id').value;
+        const username = document.getElementById('edit-username').value;
+        const email = document.getElementById('edit-email').value;
+
+        const data = { username: username, email: email };
+        showEditMessage('Saving changes...', 'default');
+
+        try {
+            const response = await fetch(`/admin/users/${userId}`, { 
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                showEditMessage('User updated successfully!', 'success');
+                await fetchUserManagementData(); 
+                setTimeout(closeEditUserModal, 1500); 
+            } else {
+                showEditMessage(result.error || 'Failed to update user. Server error.', 'error');
+            }
+            
+        } catch (error) {
+            console.error('Error updating user:', error);
+            showEditMessage('A network error occurred while updating the user.', 'error');
+        }
+    }
+
+    // 4. Function to toggle Admin Status
+    async function toggleAdminStatus(userId, currentStatus) {
+        if (!confirm(`Are you sure you want to ${currentStatus ? 'DEMOTE' : 'PROMOTE'} user ID ${userId}?`)) {
+            return;
+        }
+
+        const token = getToken();
+
+        try {
+            const newStatus = !currentStatus;
+            
+            const response = await fetch(`/admin/users/${userId}`, { 
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ is_admin: newStatus })
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert(`User ID ${userId} ${newStatus ? 'promoted to Admin' : 'demoted'} successfully!`);
+                fetchUserManagementData(); 
+            } else {
+                alert(`Failed to change admin status: ${result.error || 'Server error'}`);
+            }
+            
+        } catch (error) {
+            console.error('Error toggling admin status:', error);
+            alert('A network error occurred while updating status.');
+        }
+    }
+
+    // 5. Function to delete a user
+    async function confirmDeleteUser(userId, username) {
+        if (!confirm(`Are you sure you want to PERMANENTLY DELETE user ${username} (ID: ${userId}) and ALL their associated data? This action cannot be undone.`)) {
+            return;
+        }
+
+        const token = getToken();
+
+        try {
+            const response = await fetch(`/admin/users/${userId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                alert(`User ${username} successfully deleted.`);
+                fetchUserManagementData(); 
+            } else {
+                const result = await response.json();
+                alert(`Failed to delete user: ${result.error || 'Server error'}`);
+            }
+        } catch (error) {
+            console.error('Error deleting user:', error);
+            alert('A network error occurred while attempting to delete the user.');
+        }
+    }
+
+    // Function to fetch the user list
+    async function fetchUserManagementData() {
+        const token = getToken();
+        const tableBody = document.getElementById('user-table-body');
+        
+        if (!tableBody) return;
+
+        // Clear the table and show a loading state
+        tableBody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-blue-500"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Fetching user list...</td></tr>`;
+        
+        try {
+            const response = await fetch('/admin/users', { 
+                method: 'GET',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            const users = await response.json();
+
+            if (response.ok) {
+                renderUserTable(users);
+            } else if (response.status === 401 || response.status === 403) {
+                tableBody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-red-600">Authentication failed or not authorized.</td></tr>`;
+                if (response.status === 401) logout();
+            } else {
+                console.error('Failed to fetch users:', users.error || 'Server error');
+                tableBody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-red-600">Error loading user data: ${users.error || 'Unknown error'}.</td></tr>`;
+            }
+
+        } catch (error) {
+            console.error('Network error fetching user data:', error);
+            tableBody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-red-600">Network error. Check console.</td></tr>`;
+        }
+    }
+
+    // Helper function to build the table rows
+    function renderUserTable(users) {
+        const tableBody = document.getElementById('user-table-body');
+        if (!tableBody) return;
+
+        if (users.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-gray-500">No active users found.</td></tr>`;
+            return;
+        }
+
+        let html = '';
+        users.forEach(user => {
+            const adminStatusClass = user.is_admin ? 'text-green-600 font-bold' : 'text-gray-500';
+            const tokenBalance = parseFloat(user.token_balance || 0).toFixed(2);
+            const litresDispensed = parseFloat(user.litres_dispensed || 0).toFixed(2);
+
+            html += `
+                <tr data-user-id="${user.id}" class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${user.id}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${user.username}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${user.email}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-blue-600">${tokenBalance}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${litresDispensed} L</td> 
+                    <td class="px-6 py-4 whitespace-nowrap text-sm ${adminStatusClass}">${user.is_admin ? 'YES' : 'No'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                        <button onclick="openEditUserModal('${user.id}', '${user.username}', '${user.email}')" class="text-indigo-600 hover:text-indigo-900 mr-2">
+                            <i class="fa-solid fa-pencil mr-1"></i> Edit
+                        </button>
+                        <button onclick="openTokenModal('${user.id}', '${user.username}', ${tokenBalance})" class="text-blue-600 hover:text-blue-900 mr-2">
+                            <i class="fa-solid fa-plus-minus mr-1"></i> Tokens
+                        </button>
+                        <button onclick="toggleAdminStatus('${user.id}', ${user.is_admin})" class="text-red-600 hover:text-red-900 mr-2">
+                            ${user.is_admin ? '<i class="fa-solid fa-user-slash mr-1"></i> Demote' : '<i class="fa-solid fa-user-shield mr-1"></i> Promote'}
+                        </button>
+                        <button onclick="confirmDeleteUser('${user.id}', '${user.username}')" class="text-gray-500 hover:text-gray-700">
+                            <i class="fa-solid fa-trash mr-1"></i> Delete
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        tableBody.innerHTML = html;
+    }
+
+    // ==============================================
+    // OVERVIEW FUNCTIONS
+    // ==============================================
+    
+    // NOTE: This must only be called AFTER _overview.html is loaded.
+    async function fetchCompanyWaterData() {
+        // (Your existing logic for fetching water level and metrics)
+        const token = getToken();
+        
+        try {
+            const response = await fetch('/admin/tank_status', {
+                method: 'GET',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                const level = parseFloat(data.level || 0);
+                const capacity = parseFloat(data.capacity || 1000); // Default to 1000 if capacity is missing
+                
+                const percentage = (level / capacity) * 100;
+                const safePercentage = Math.min(100, Math.max(0, percentage)).toFixed(2);
+                
+                // NOTE: Use the correct IDs from your _overview.html
+                document.getElementById('company-water-level').textContent = `${level.toFixed(2)}L / ${capacity.toFixed(2)}L`;
+                const progressBar = document.getElementById('company-progress-bar');
+                if (progressBar) {
+                    progressBar.style.width = `${safePercentage}%`;
+                }
+                const lastUpdated = document.getElementById('company-last-updated');
+                if (lastUpdated) {
+                    lastUpdated.textContent = data.last_updated;
+                }
+                
+            } else if (response.status === 401 || response.status === 403) {
+                 // Handle unauthorized access or token expired
+                 document.getElementById('company-water-level').textContent = 'AUTH ERROR';
+            } else {
+                 document.getElementById('company-water-level').textContent = 'API ERROR';
+            }
+
+        } catch (error) {
+            console.error('Network error fetching tank status:', error);
+            // Fallback for data display
+            const levelEl = document.getElementById('company-water-level');
+            if(levelEl) levelEl.textContent = 'NET ERROR';
+        }
+
+        // Fetch metrics (total dispensed, total users)
+        try {
+            const metricsResponse = await fetch('/admin/metrics', {
+                method: 'GET',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            
+            const metricsData = await metricsResponse.json();
+
+            if (metricsResponse.ok) {
+                const totalDispensedElement = document.getElementById('total-system-dispensed');
+                const totalUsersElement = document.getElementById('total-users');
+                
+                if (totalDispensedElement) {
+                    totalDispensedElement.textContent = `${parseFloat(metricsData.total_dispensed || 0).toFixed(2)}L`;
+                }
+                if (totalUsersElement) {
+                    totalUsersElement.textContent = metricsData.total_users || 0;
+                }
+
+                const systemRevenueElement = document.getElementById('system-revenue');
+                if (systemRevenueElement) {
+                    // Format as currency, assuming Ksh (Kenyan Shilling) from your payments log setup
+                    systemRevenueElement.textContent = `Ksh ${parseFloat(metricsData.system_revenue || 0).toFixed(2)}`;
+                }
+
+
+            } else {
+                console.error('Failed to fetch key metrics:', metricsData.error || 'Server error');
+            }
+
+        } catch (error) {
+            console.error('Network error fetching key metrics:', error);
+        }
+    }
+
+
+    async function handleRefillTank(e) {
+        // (Your existing logic for refilling the tank)
+        e.preventDefault();
+        const token = getToken();
+        const refillAmount = document.getElementById('refill-amount').value;
+        
+        if (refillAmount <= 0) {
+            showRefillMessage('Refill amount must be greater than zero.', 'error');
+            return;
+        }
+        
+        const data = { amount: parseFloat(refillAmount) };
+        
+        try {
+            const response = await fetch('/admin/refill_tank', { 
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+
+            if (response.ok) {
+                showRefillMessage(result.msg || `Tank refilled by ${refillAmount}L successfully!`, 'success');
+                document.getElementById('refill-form').reset();
+                fetchCompanyWaterData(); 
+            } else if (response.status === 401 || response.status === 403) {
+                showRefillMessage(result.error || 'Authentication failed or not authorized.', 'error');
+                if (response.status === 401) logout();
+            } else {
+                showRefillMessage(result.error || 'Refill failed due to a server error.', 'error');
+            }
+
+        } catch (error) {
+            console.error('Network error during refill:', error);
+            showRefillMessage('A network error occurred. Check your connection.', 'error');
+        }
+    }
+    
+    // ==============================================
+    // SYSTEM LOGS FUNCTIONS
+    // ==============================================
+    
+    function setupLogsPage() {
+        // === Configuration ===
+        const LOG_CONFIG = {
+            'dispense': {
+                endpoint: '/admin/logs/dispense',
+                bodyId: 'dispense-logs-table-body',
+                fields: ['timestamp', 'username', 'litres_dispensed', 'tokens_consumed', 'machine_id'], 
+                colCount: 5,
+                format: (item) => ({
+                    ...item,
+                    // Ensure date formatting is handled
+                    timestamp: new Date(item.timestamp).toLocaleString() || item.timestamp, 
+                    litres_dispensed: `${parseFloat(item.litres_dispensed).toFixed(2)} L`,
+                    tokens_consumed: `${parseFloat(item.tokens_consumed).toFixed(2)} TKN`
+                }),
+                isLoaded: false,
+                data: null
+            },
+            'payments': {
+                endpoint: '/admin/logs/payments',
+                bodyId: 'payment-logs-table-body',
+                fields: ['transaction_id','created_at', 'username', 'amount', 'tokens_purchased', 'status'], 
+                colCount: 6,
+                format: (item) => ({
+                    ...item,
+                    // Ensure date formatting is handled
+                    created_at: new Date(item.created_at).toLocaleString() || item.created_at,
+                    tokens_purchased: `${parseFloat(item.tokens_purchased).toFixed(2)} TKN`,
+                    amount: `Ksh ${parseFloat(item.amount).toFixed(2)}`,
+                    status: item.status || 'N/A'
+                }),
+                isLoaded: false,
+                data: null
+            }
+        };
+
+        const tabs = document.querySelectorAll('.log-tab');
+        const contents = document.querySelectorAll('.log-content');
+
+        //* Helper function to extract a token from cookies.
+        function getCookie(name) {
+            const nameEQ = name + "=";
+            const ca = document.cookie.split(';');
+            for(let i=0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0)==' ') c = c.substring(1,c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+            }
+            return null;
+        }
+
+        // === Utility Function: Fetch with Retry (UPDATED) ===
+        async function fetchWithRetry(url, options = {}, maxRetries = 3) {
+            
+            const token = getToken();
+
+            const headers = {
+                'Content-Type': 'application/json',
+                ...(options.headers || {}) 
+            };
+
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+
+            const fetchOptions = {
+                ...options,
+                headers: headers,
+                credentials: 'include' 
+            };
+            
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, fetchOptions);
+                    
+                    if (response.status === 401 || response.status === 403) {
+                        throw new Error(`Authentication/Authorization Error. Status: ${response.status}. Please log in again.`);
+                    }
+
+                    if (response.ok) return response;
+                    
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                } catch (error) {
+                    if (i === maxRetries - 1) throw error;
+                    await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));
+                }
+            }
+        }
+
+        // === RENDERING LOGIC (THE MISSING FUNCTION) ===
+        function renderLogs(logType) {
+            const config = LOG_CONFIG[logType];
+            const tbody = document.getElementById(config.bodyId);
+            
+            if (!config.data || config.data.length === 0) {
+                const msg = config.data === null ? "Failed to load logs due to a server error." : `No ${logType} history found.`;
+                const color = config.data === null ? 'text-red-600' : 'text-gray-500';
+                tbody.innerHTML = `<tr><td colspan="${config.colCount}" class="px-6 py-4 text-center ${color}">${msg}</td></tr>`;
+                return;
+            }
+
+            const rowsHtml = config.data.map((item, index) => {
+                // Check for missing items, this usually indicates an API/Model structure mismatch
+                if (!item) return ''; 
+
+                const formattedItem = config.format(item);
+                const rowClass = index % 2 === 0 ? 'bg-white' : 'bg-gray-50';
+
+                const cells = config.fields.map(field => 
+                    // Ensure field exists, otherwise use 'N/A'
+                    `<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${formattedItem[field] || 'N/A'}</td>`
+                ).join('');
+
+                return `<tr class="${rowClass}">${cells}</tr>`;
+            }).join('');
+
+            tbody.innerHTML = rowsHtml;
+        }
+
+        // === Data Fetching Logic ===
+        async function loadLogs(logType) {
+            const config = LOG_CONFIG[logType];
+            const tbody = document.getElementById(config.bodyId);
+            
+            tbody.innerHTML = `<tr><td colspan="${config.colCount}" class="px-6 py-4 text-center text-gray-500">Loading ${logType} history...</td></tr>`;
+
+            try {
+                const response = await fetchWithRetry(config.endpoint);
+                const logs = await response.json();
+                
+                config.data = logs;
+                config.isLoaded = true;
+
+            } catch (error) {
+                console.error(`Error fetching ${logType} logs:`, error);
+                
+                // If the error is an auth failure, show that explicitly to the user
+                if (error.message.includes("Authentication/Authorization")) {
+                    tbody.innerHTML = `<tr><td colspan="${config.colCount}" class="px-6 py-4 text-center text-red-600 font-semibold">ACCESS DENIED: Please refresh the page or log in again.</td></tr>`;
+                } else {
+                    config.data = null; // Set to null to show generic server error
+                }
+                // Always call renderLogs even on error to display the error message
+                renderLogs(logType); 
+                return;
+            }
+            
+            renderLogs(logType);
+        }
+        
+        // === Tab Switching Logic ===
+        function switchTab(targetLogType) {
+            // 1. Update tab active state (Simplified for clarity)
+            tabs.forEach(tab => {
+                const isActive = tab.getAttribute('data-log') === targetLogType;
+                tab.classList.toggle('active', isActive);
+                if (isActive) {
+            // Active Tab: Blue background, white text
+                tab.classList.add('bg-blue-600', 'text-white', 'hover:bg-blue-700');
+                tab.classList.remove('bg-gray-100', 'text-gray-700');
+            } else {
+            // Inactive Tab: Gray background, gray text, hover state
+                tab.classList.add('bg-gray-100', 'text-gray-700', 'hover:bg-gray-200');
+                tab.classList.remove('bg-blue-600', 'text-white', 'hover:bg-blue-700');
+            }
+            });
+
+            // 2. Update content visibility
+            contents.forEach(content => {
+                const isTarget = content.id === `${targetLogType}-log-content`;
+                content.classList.toggle('hidden', !isTarget);
+            });
+            
+            // 3. Load data if not already loaded
+            if (!LOG_CONFIG[targetLogType].isLoaded) {
+                loadLogs(targetLogType);
+            } else {
+                renderLogs(targetLogType); // Just re-render cached data if already loaded
+            }
+        }
+
+        // === Event Listeners and Initial Load ===
+        tabs.forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                const logType = e.currentTarget.getAttribute('data-log');
+                switchTab(logType);
+            });
+        });
+
+        if (tabs.length > 0){
+            switchTab('dispense');
+    } else {
+        console.error("Tabs not found. Check HTML IDs/classes.");
+        }
+    }
+
+
+    // ==============================================
+    // INITIALIZATION 
+    // ==============================================
+    document.addEventListener('DOMContentLoaded', function() {
+        const token = getToken();
+        if (!token) {
+            window.location.href = "{{ url_for('frontend.login') }}"; 
+            return;
+        }
+
+        setupNavigation(); // Calls loadPageContent('overview') inside
+        fetchAdminUserData();
+        
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', logout);
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,299 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(to bottom right, #f4fff7, #e9f7ec);
+    color: #333;
+}
+
+/* Header */
+.header {
+    background: #ffffff;
+    border-bottom: 2px solid #d4f5d1;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.logo-section {
+    display: flex;
+    align-items: center;
+}
+.logo-icon {
+    background: #34a853;
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    margin-right: 10px;
+    font-size: 20px;
+}
+.user-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.notification {
+    position: relative;
+    font-size: 20px;
+    color: #555;
+}
+.notification .badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #d93025;
+    color: white;
+    font-size: 10px;
+    padding: 3px 6px;
+    border-radius: 50%;
+}
+.user-profile {
+    display: flex;
+    align-items: center;
+}
+.user-icon {
+    background: #34a853;
+    color: white;
+    border-radius: 50%;
+    padding: 8px;
+    margin-right: 8px;
+}
+
+/* Navbar */
+.navbar {
+    background: white;
+    padding: 10px 20px;
+    border-bottom: 2px solid #d4f5d1;
+    display: flex;
+    gap: 15px;
+}
+.nav-btn {
+    background: #eaf9f0;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+    color: #2e7d32;
+    text-decoration: none;
+    transition: 0.3s;
+}
+.nav-btn:hover {
+    background: #c8f0d0;
+}
+.nav-btn.active {
+    background: #34a853;
+    color: white;
+}
+
+/* Stats Cards */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+}
+.stat-card {
+    padding: 20px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    font-size: 18px;
+}
+.stat-title {
+    font-size: 14px;
+    opacity: 0.9;
+}
+.stat-value {
+    font-size: 26px;
+    font-weight: bold;
+}
+.stat-subtitle {
+    font-size: 12px;
+    opacity: 0.8;
+}
+.stat-card i {
+    font-size: 28px;
+}
+.stat-card.green { background: linear-gradient(to bottom right, #66bb6a, #388e3c); }
+.stat-card.blue { background: linear-gradient(to bottom right, #64b5f6, #1976d2); }
+.stat-card.purple { background: linear-gradient(to bottom right, #ba68c8, #7b1fa2); }
+.stat-card.orange { background: linear-gradient(to bottom right, #ffb74d, #f57c00); }
+
+/* Progress Bar */
+.water-level {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 20px;
+    box-shadow: 0px 4px 8px rgba(0,0,0,0.05);
+}
+.water-level h3 {
+    color: #2e7d32;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.progress-bar {
+    background: #e0e0e0;
+    border-radius: 20px;
+    height: 20px;
+    overflow: hidden;
+}
+.progress {
+    background: linear-gradient(to right, #66bb6a, #388e3c);
+    height: 100%;
+    border-radius: 20px;
+}
+.water-level p {
+    margin-top: 8px;
+    font-weight: bold;
+    color: #444;
+}
+
+/* Forms */
+form input, form select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+form button {
+    background: #34a853;
+    color: white;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+form button:hover {
+    background: #2e7d32;
+}
+
+/* Table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+th, td {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+th {
+    background: #f0f9f2;
+}
+
+/* Tips */
+.tips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+}
+.tip-card {
+    background: #eaf9f0;
+    padding: 15px;
+    border-radius: 8px;
+    color: #2e7d32;
+    font-weight: bold;
+}
+
+/* Emergency Button */
+.emergency {
+    background: #ff5252;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.emergency:hover {
+    background: #d32f2f;
+}
+
+/* Responsive Styles */
+@media (max-width: 900px) {
+    .header, .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px 15px;
+    }
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+}
+
+@media (max-width: 600px) {
+    .header, .navbar {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 8px 5px;
+    }
+    .logo-section, .user-section {
+        flex-direction: row;
+        justify-content: space-between;
+        width: 100%;
+    }
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    .stat-card {
+        font-size: 16px;
+        padding: 12px;
+        margin-bottom: 10px;
+    }
+    .stat-title {
+        font-size: 12px;
+    }
+    .stat-value {
+        font-size: 20px;
+    }
+    .stat-card i {
+        font-size: 22px;
+    }
+    .water-level {
+        padding: 12px;
+        margin-top: 12px;
+    }
+    .water-level h3 {
+        font-size: 1em;
+    }
+    .progress-bar {
+        height: 14px;
+    }
+    form input, form select {
+        padding: 8px;
+        font-size: 14px;
+    }
+    form button {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+    table th, table td {
+        padding: 6px;
+        font-size: 13px;
+    }
+    .tips-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    .tip-card {
+        padding: 10px;
+        font-size: 14px;
+    }
+}

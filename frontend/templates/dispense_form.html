@@ -1,0 +1,67 @@
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
+
+    <div class="bg-white overflow-hidden shadow rounded-xl p-6 lg:col-span-1">
+        <h3 class="text-xl font-semibold text-gray-700 mb-4 flex items-center space-x-2">
+            <i class="fa-solid fa-tap text-blue-500"></i>
+            <span>Dispense Water</span>
+        </h3>
+
+        <form id="dispense-form">
+            <div class="mb-4">
+                <label for="litres-to-dispense" class="block text-sm font-medium text-gray-700">Litres to Dispense</label>
+                <input 
+                    type="number" 
+                    id="litres-to-dispense" 
+                    name="litres" 
+                    min="0.01" 
+                    step="0.01" 
+                    required 
+                    placeholder="e.g., 50.00"
+                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                >
+            </div>
+            
+            <p id="tokens-required-msg" class="text-sm text-gray-500 mb-4 font-medium">Required Tokens: 0.00</p>
+            
+            <button 
+                type="submit" 
+                id="dispense-button"
+                class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+                Dispense Water
+            </button>
+        </form>
+        
+        <div id="dispense-message" class="mt-4 text-center text-sm hidden"></div>
+    </div>
+
+
+    <div id="company-water-progress-container" class="bg-white p-6 rounded-xl shadow-md lg:col-span-1 hidden">
+        <h3 class="text-xl font-semibold text-gray-700 mb-4 flex justify-between items-center">
+            Company Water Tank Status
+            <i class="fa-solid fa-tank-water text-blue-500"></i>
+        </h3>
+        
+        <div class="space-y-4">
+            <p class="text-sm text-gray-500">Current Level: <span id="company-water-level" class="font-bold text-gray-800">Loading...</span></p>
+            
+            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                <div id="company-progress-bar" class="h-2.5 rounded-full bg-blue-500 transition-all duration-500" style="width: 0%"></div>
+            </div>
+            
+            <p class="text-xs text-gray-400">Last Updated: <span id="company-last-updated">N/A</span></p>
+        </div>
+
+        <hr class="my-4">
+
+        <form id="refill-form">
+            <h4 class="font-medium text-gray-700 mb-2">Refill Tank (Admin Action)</h4>
+            <input type="number" id="refill-amount" placeholder="Litres to Add" required min="1" step="0.01" class="w-full p-2 border border-gray-300 rounded-lg mb-3">
+            <button type="submit" id="refill-button" class="w-full py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                Refill Tank
+            </button>
+            <p id="refill-message" class="mt-4 text-center text-sm hidden"></p>
+        </form>
+    </div>
+
+</div>
