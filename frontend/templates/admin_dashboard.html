@@ -123,13 +123,14 @@
     </div>
 
     
-    <script>
+<script>
     // ==============================================
     // UTILITY FUNCTIONS
     // ==============================================
     function logout() {
         localStorage.removeItem('token');
         localStorage.removeItem('access_token'); 
+        // NOTE: The URL for is a Flask/Jinja template tag and should remain as is in this file.
         window.location.href = "{{ url_for('frontend.login') }}"; 
     }
 
@@ -225,7 +226,8 @@
         if (!token) return;
         
         try {
-            const response = await fetch('/user/me', {
+            // API CHANGE: Updated from '/user/me' to '/api/user/me'
+            const response = await fetch('/api/user/me', {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -239,6 +241,7 @@
             document.getElementById('user-name').textContent = data.username;
             
             if (!data.is_admin) {
+                 // NOTE: The URL for is a Flask/Jinja template tag and should remain as is in this file.
                  window.location.href = "{{ url_for('frontend.dashboard') }}";
             }
             
@@ -293,8 +296,8 @@
         showTokenEditMessage('Applying adjustment...', 'default'); // Use a loading/default message
 
         try {
-            // NOTE: Using POST for token adjustments as it represents a transaction
-            const response = await fetch(`/admin/users/${userId}/tokens`, { 
+            // API CHANGE: Updated from '/admin/users/{userId}/tokens' to '/api/admin/users/{userId}/tokens'
+            const response = await fetch(`/api/admin/users/${userId}/tokens`, { 
                 method: 'PUT', 
                 headers: {
                     'Content-Type': 'application/json',
@@ -357,7 +360,8 @@
         showEditMessage('Saving changes...', 'default');
 
         try {
-            const response = await fetch(`/admin/users/${userId}`, { 
+            // API CHANGE: Updated from '/admin/users/{userId}' to '/api/admin/users/{userId}'
+            const response = await fetch(`/api/admin/users/${userId}`, { 
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -393,7 +397,8 @@
         try {
             const newStatus = !currentStatus;
             
-            const response = await fetch(`/admin/users/${userId}`, { 
+            // API CHANGE: Updated from '/admin/users/{userId}' to '/api/admin/users/{userId}'
+            const response = await fetch(`/api/admin/users/${userId}`, { 
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -426,7 +431,8 @@
         const token = getToken();
 
         try {
-            const response = await fetch(`/admin/users/${userId}`, {
+            // API CHANGE: Updated from '/admin/users/{userId}' to '/api/admin/users/{userId}'
+            const response = await fetch(`/api/admin/users/${userId}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -457,7 +463,8 @@
         tableBody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-blue-500"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Fetching user list...</td></tr>`;
         
         try {
-            const response = await fetch('/admin/users', { 
+            // API CHANGE: Updated from '/admin/users' to '/api/admin/users'
+            const response = await fetch('/api/admin/users', { 
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -531,11 +538,11 @@
     
     // NOTE: This must only be called AFTER _overview.html is loaded.
     async function fetchCompanyWaterData() {
-        // (Your existing logic for fetching water level and metrics)
         const token = getToken();
         
         try {
-            const response = await fetch('/admin/tank_status', {
+            // API CHANGE: Updated from '/admin/tank_status' to '/api/admin/tank_status'
+            const response = await fetch('/api/admin/tank_status', {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -557,7 +564,7 @@
                 }
                 const lastUpdated = document.getElementById('company-last-updated');
                 if (lastUpdated) {
-                    lastUpdated.textContent = data.last_updated;
+                    lastUpdated.textContent = new Date(data.last_updated).toLocaleString();
                 }
                 
             } else if (response.status === 401 || response.status === 403) {
@@ -576,7 +583,8 @@
 
         // Fetch metrics (total dispensed, total users)
         try {
-            const metricsResponse = await fetch('/admin/metrics', {
+            // API CHANGE: Updated from '/admin/metrics' to '/api/admin/metrics'
+            const metricsResponse = await fetch('/api/admin/metrics', {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -612,10 +620,10 @@
 
 
     async function handleRefillTank(e) {
-        // (Your existing logic for refilling the tank)
         e.preventDefault();
         const token = getToken();
-        const refillAmount = document.getElementById('refill-amount').value;
+        const refillAmountInput = document.getElementById('refill-amount');
+        const refillAmount = refillAmountInput ? refillAmountInput.value : 0;
         
         if (refillAmount <= 0) {
             showRefillMessage('Refill amount must be greater than zero.', 'error');
@@ -625,7 +633,8 @@
         const data = { amount: parseFloat(refillAmount) };
         
         try {
-            const response = await fetch('/admin/refill_tank', { 
+            // API CHANGE: Updated from '/admin/refill_tank' to '/api/admin/refill_tank'
+            const response = await fetch('/api/admin/refill_tank', { 
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -661,7 +670,8 @@
         // === Configuration ===
         const LOG_CONFIG = {
             'dispense': {
-                endpoint: '/admin/logs/dispense',
+                // API CHANGE: Updated from '/admin/logs/dispense' to '/api/admin/logs/dispense'
+                endpoint: '/api/admin/logs/dispense',
                 bodyId: 'dispense-logs-table-body',
                 fields: ['timestamp', 'username', 'litres_dispensed', 'tokens_consumed', 'machine_id'], 
                 colCount: 5,
@@ -676,7 +686,8 @@
                 data: null
             },
             'payments': {
-                endpoint: '/admin/logs/payments',
+                // API CHANGE: Updated from '/admin/logs/payments' to '/api/admin/logs/payments'
+                endpoint: '/api/admin/logs/payments',
                 bodyId: 'payment-logs-table-body',
                 fields: ['transaction_id','created_at', 'username', 'amount', 'tokens_purchased', 'status'], 
                 colCount: 6,
@@ -860,6 +871,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         const token = getToken();
         if (!token) {
+            // NOTE: The URL for is a Flask/Jinja template tag and should remain as is in this file.
             window.location.href = "{{ url_for('frontend.login') }}"; 
             return;
         }

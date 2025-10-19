@@ -137,6 +137,9 @@
     // Global variable for the chart (defined once)
     let usageChart;
 
+    // 🛑 VERCEL DEPLOYMENT CHANGE: Define the absolute base URL for your deployed API
+    const API_BASE_URL = 'https://your-backend-api-name.vercel.app'; // <--- 🛑 REPLACE THIS with your actual backend URL
+
     // --- UTILITY FUNCTIONS ---
 
     //Helper function for card-based navigation
@@ -158,7 +161,8 @@
         if (!token) return;
 
         try {
-            const response = await fetch('/payments/history', {
+            // 🛑 VERCEL CHANGE: Use API_BASE_URL
+            const response = await fetch(`${API_BASE_URL}/payments/history`, {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -207,7 +211,8 @@ async function fetchUserData() {
     if (!token) return;
     
     try {
-        const response = await fetch('/user/me', {
+        // 🛑 VERCEL CHANGE: Use API_BASE_URL
+        const response = await fetch(`${API_BASE_URL}/user/me`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -287,7 +292,8 @@ async function fetchCompanyWaterData() {
     }
 
     try {
-        const response = await fetch('/admin/tank_status', { // <-- Admin API endpoint
+        // 🛑 VERCEL CHANGE: Use API_BASE_URL
+        const response = await fetch(`${API_BASE_URL}/admin/tank_status`, { // <-- Admin API endpoint
             method: 'GET',
             headers: { 
                 'Authorization': `Bearer ${token}` 
@@ -354,7 +360,8 @@ async function handleRefillTank(e) {
     const data = { amount: parseFloat(refillAmount) };
 
     try {
-        const response = await fetch('/admin/refill_tank', { 
+        // 🛑 VERCEL CHANGE: Use API_BASE_URL
+        const response = await fetch(`${API_BASE_URL}/admin/refill_tank`, { 
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -407,7 +414,8 @@ async function handleRefillTank(e) {
     messageDiv.classList.add('hidden');
 
     try {
-        const response = await fetch('/water/dispense', {
+        // 🛑 VERCEL CHANGE: Use API_BASE_URL
+        const response = await fetch(`${API_BASE_URL}/water/dispense`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -475,7 +483,8 @@ async function handleRefillTank(e) {
     if (!token) return;
 
     try {
-        const response = await fetch('/water/usage/history', {
+        // 🛑 VERCEL CHANGE: Use API_BASE_URL
+        const response = await fetch(`${API_BASE_URL}/water/usage/history`, {
             method: 'GET',
             headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -622,7 +631,8 @@ async function handleRefillTank(e) {
                 payButton.textContent = 'Processing...';
 
                 try {
-                    const response = await fetch('/payments/buy', {
+                    // 🛑 VERCEL CHANGE: Use API_BASE_URL
+                    const response = await fetch(`${API_BASE_URL}/payments/buy`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
