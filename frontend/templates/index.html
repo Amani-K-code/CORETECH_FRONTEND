@@ -53,55 +53,65 @@
     </div>
 
     <script>
-        const loginForm = document.getElementById('login-form');
-        const messageContainer = document.getElementById('message-container');
+    // 🛑 VERCEL DEPLOYMENT CHANGE: Define the absolute base URL for your deployed API
+    const API_BASE_URL = 'https://your-backend-api-domain.com'; // <--- 🛑 REPLACE THIS with your actual live backend URL
+    
+    // 🛑 VERCEL DEPLOYMENT CHANGE: Define absolute paths for dashboards
+    // Ensure these match the paths to your dashboard files in your Vercel project structure (e.g., /dashboard.html)
+    const ADMIN_DASHBOARD_URL = '/admin_dashboard.html'; 
+    const USER_DASHBOARD_URL = '/dashboard.html'; 
+    
+    const loginForm = document.getElementById('login-form');
+    const messageContainer = document.getElementById('message-container');
 
-        function showMessage(message, type = 'error') {
-            messageContainer.textContent = message;
-            messageContainer.className = `message-container ${type}`;
-        }
+    function showMessage(message, type = 'error') {
+        messageContainer.textContent = message;
+        messageContainer.className = `message-container ${type}`;
+    }
 
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            showMessage('', 'hidden');
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        showMessage('', 'hidden');
 
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            
-            const data = {
-                username: username,
-                password: password
-            };
-            
-            try {
-                const response = await fetch('http://127.0.0.1:5001/auth/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data),
-                });
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        
+        const data = {
+            username: username,
+            password: password
+        };
+        
+        try {
+            // 🛑 VERCEL FIX: Use the absolute API URL
+            const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
 
-                const result = await response.json();
+            const result = await response.json();
 
-                if (response.ok) {
-                    localStorage.setItem('token', result.token);
-                    showMessage('Login successful! Redirecting...', 'success');
+            if (response.ok) {
+                localStorage.setItem('token', result.token);
+                showMessage('Login successful! Redirecting...', 'success');
 
-                    if (result.is_admin){
-                        window.location.href = "{{ url_for('frontend.admin_dashboard') }}"; 
-                    } else {
-                        window.location.href = "{{ url_for('frontend.dashboard') }}"; 
-                    }
+                // 🛑 VERCEL FIX: Use the absolute path constants for redirection
+                if (result.is_admin){
+                    window.location.href = ADMIN_DASHBOARD_URL; 
                 } else {
-                    const message = result.error || 'Login failed. Please check your credentials.';
-                    showMessage(message);
+                    window.location.href = USER_DASHBOARD_URL; 
                 }
-            } catch (error) {
-                console.error('Network error:', error);
-                showMessage('A network error occurred. Please check your connection.');
+            } else {
+                const message = result.error || 'Login failed. Please check your credentials.';
+                showMessage(message);
             }
-        });
-    </script>
+        } catch (error) {
+            console.error('Network error:', error);
+            showMessage('A network error occurred. Please check your connection and that the API is running.');
+        }
+    });
+</script>
 </body>
 </html>

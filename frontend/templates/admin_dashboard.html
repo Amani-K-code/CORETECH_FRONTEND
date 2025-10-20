@@ -127,6 +127,9 @@
     // ==============================================
     // UTILITY FUNCTIONS
     // ==============================================
+
+    const API_BASE_URL = 'https://your-backend-api-name.vercel.app';
+
     function logout() {
         localStorage.removeItem('token');
         localStorage.removeItem('access_token'); 
@@ -227,7 +230,7 @@
         
         try {
             // API CHANGE: Updated from '/user/me' to '/api/user/me'
-            const response = await fetch('/api/user/me', {
+            const response = await fetch(`${API_BASE_URL}/api/user/me`, {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -297,7 +300,7 @@
 
         try {
             // API CHANGE: Updated from '/admin/users/{userId}/tokens' to '/api/admin/users/{userId}/tokens'
-            const response = await fetch(`/api/admin/users/${userId}/tokens`, { 
+            const response = await fetch(`${API_BASE_URL}/api/admin/users/${userId}/tokens`, { 
                 method: 'PUT', 
                 headers: {
                     'Content-Type': 'application/json',
@@ -361,7 +364,7 @@
 
         try {
             // API CHANGE: Updated from '/admin/users/{userId}' to '/api/admin/users/{userId}'
-            const response = await fetch(`/api/admin/users/${userId}`, { 
+            const response = await fetch(`${API_BASE_URL}/api/admin/users/${userId}`, { 
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -398,7 +401,7 @@
             const newStatus = !currentStatus;
             
             // API CHANGE: Updated from '/admin/users/{userId}' to '/api/admin/users/{userId}'
-            const response = await fetch(`/api/admin/users/${userId}`, { 
+            const response = await fetch(`${API_BASE_URL}/api/admin/users/${userId}`, { 
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -432,7 +435,7 @@
 
         try {
             // API CHANGE: Updated from '/admin/users/{userId}' to '/api/admin/users/{userId}'
-            const response = await fetch(`/api/admin/users/${userId}`, {
+            const response = await fetch(`${API_BASE_URL}/api/admin/users/${userId}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -464,7 +467,7 @@
         
         try {
             // API CHANGE: Updated from '/admin/users' to '/api/admin/users'
-            const response = await fetch('/api/admin/users', { 
+            const response = await fetch(`${API_BASE_URL}/api/admin/users`, { 
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -542,7 +545,7 @@
         
         try {
             // API CHANGE: Updated from '/admin/tank_status' to '/api/admin/tank_status'
-            const response = await fetch('/api/admin/tank_status', {
+            const response = await fetch(`${API_BASE_URL}/api/admin/tank_status`, {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -584,7 +587,7 @@
         // Fetch metrics (total dispensed, total users)
         try {
             // API CHANGE: Updated from '/admin/metrics' to '/api/admin/metrics'
-            const metricsResponse = await fetch('/api/admin/metrics', {
+            const metricsResponse = await fetch(`${API_BASE_URL}/api/admin/metrics`, {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -634,7 +637,7 @@
         
         try {
             // API CHANGE: Updated from '/admin/refill_tank' to '/api/admin/refill_tank'
-            const response = await fetch('/api/admin/refill_tank', { 
+            const response = await fetch(`${API_BASE_URL}/api/admin/refill_tank`, { 
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -671,7 +674,7 @@
         const LOG_CONFIG = {
             'dispense': {
                 // API CHANGE: Updated from '/admin/logs/dispense' to '/api/admin/logs/dispense'
-                endpoint: '/api/admin/logs/dispense',
+                endpoint: `${API_BASE_URL}/api/admin/logs/dispense`,
                 bodyId: 'dispense-logs-table-body',
                 fields: ['timestamp', 'username', 'litres_dispensed', 'tokens_consumed', 'machine_id'], 
                 colCount: 5,
@@ -687,7 +690,7 @@
             },
             'payments': {
                 // API CHANGE: Updated from '/admin/logs/payments' to '/api/admin/logs/payments'
-                endpoint: '/api/admin/logs/payments',
+                endpoint: `${API_BASE_URL}/api/admin/logs/payments`,
                 bodyId: 'payment-logs-table-body',
                 fields: ['transaction_id','created_at', 'username', 'amount', 'tokens_purchased', 'status'], 
                 colCount: 6,
